@@ -7,88 +7,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 
 <style>
 :root {
---bg: #030712;
---surface: #111827;
---glass: rgba(17, 24, 39, 0.7);
---border: rgba(255, 255, 255, 0.08);
---accent: #38bdf8;
---success: #10b981;
---danger: #f43f5e;
---text-main: #f8fafc;
---text-dim: #94a3b8;
+--bg: #020617; --glass: rgba(15, 23, 42, 0.8); --border: rgba(255, 255, 255, 0.1);
+--accent: #38bdf8; --success: #10b981; --danger: #f43f5e; --text: #f8fafc; --text-dim: #94a3b8;
 }
-
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-body {
-background: var(--bg);
-background-image: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
-radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
-color: var(--text-main);
-font-family: 'Plus Jakarta Sans', sans-serif;
-margin: 0;
-padding: env(safe-area-inset-top) 12px 20px 12px;
-line-height: 1.5;
-}
-
-/* Responsive Layout */
+body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 15px; }
 .app-container { max-width: 1400px; margin: 0 auto; display: grid; gap: 16px; grid-template-columns: 1fr; }
-@media (min-width: 1024px) { .app-container { grid-template-columns: 1fr 380px; } }
-
-/* Components */
-.glass-card {
-background: var(--glass);
-backdrop-filter: blur(16px);
--webkit-backdrop-filter: blur(16px);
-border: 1px solid var(--border);
-border-radius: 20px;
-padding: 20px;
-box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
-}
-
-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 4px 20px 4px; }
-.logo { font-weight: 800; font-size: clamp(18px, 5vw, 24px); letter-spacing: -0.5px; }
-.logo span { color: var(--accent); }
-
-/* Signal Intelligence UI */
-.signal-box { border: 1.5px solid var(--border); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-.signal-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-.signal-type { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
-.checklist { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
-.check-pill { padding: 4px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.05); border: 1px solid var(--border); }
-.check-active { background: rgba(56, 189, 248, 0.15); border-color: var(--accent); color: var(--accent); }
-
-/* Modern Inputs */
-.field-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
-@media (min-width: 640px) { .field-grid { grid-template-columns: repeat(4, 1fr); } }
-
-.input-wrap { display: flex; flex-direction: column; gap: 6px; }
-label { font-size: 11px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
-input, select {
-background: rgba(0,0,0,0.2); border: 1px solid var(--border); padding: 12px; border-radius: 10px;
-color: white; font-family: 'JetBrains Mono'; font-size: 14px; width: 100%;
-}
-input:focus { border-color: var(--accent); outline: none; background: rgba(56, 189, 248, 0.05); }
-
-.btn-action {
-background: linear-gradient(135deg, var(--accent), #0284c7);
-color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 800;
-cursor: pointer; width: 100%; font-size: 14px; transition: 0.2s;
-}
-.btn-action:active { transform: scale(0.96); }
-
-/* Visual Charts & Table */
-.chart-frame { height: 450px; border-radius: 14px; overflow: hidden; margin-top: 15px; }
-.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-td, th { padding: 12px 8px; text-align: left; font-size: 13px; }
-th { color: var(--text-dim); font-weight: 600; border-bottom: 1px solid var(--border); }
-tr:not(:last-child) { border-bottom: 1px solid var(--border); }
-
-#boot-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+@media (min-width: 1024px) { .app-container { grid-template-columns: 1fr 400px; } }
+.glass-card { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; }
+header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; }
+.logo { font-weight: 800; font-size: 22px; } .logo span { color: var(--accent); }
+.signal-box { border: 2px solid var(--border); transition: 0.4s; }
+.timer-badge { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--accent); background: rgba(56,189,248,0.1); padding: 4px 8px; border-radius: 6px; }
+.check-pill { padding: 4px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.05); border: 1px solid var(--border); margin-right: 4px; color: var(--text-dim); }
+.active-pill { background: rgba(56, 189, 248, 0.2); border-color: var(--accent); color: var(--accent); }
+input, select { background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 12px; border-radius: 10px; color: white; font-family: 'JetBrains Mono'; width: 100%; margin-bottom: 10px; }
+.btn-action { background: linear-gradient(135deg, var(--accent), #0284c7); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; }
+#boot-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:9999; display:flex; justify-content:center; align-items:center; }
 </style>
 </head>
 <body>
@@ -96,85 +35,67 @@ tr:not(:last-child) { border-bottom: 1px solid var(--border); }
 <audio id="bank-alert" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 
 <div id="boot-overlay">
-<div class="glass-card" style="text-align:center; max-width: 90%;">
-<h2 style="margin-top:0;">AKUDON<span>GOLD</span></h2>
-<p style="color:var(--text-dim); margin-bottom:20px; font-size:14px;">Initializing Smart Money AI Scanning Engine...</p>
-<button onclick="startSystem()" class="btn-action">INITIALIZE TERMINAL</button>
+<div class="glass-card" style="text-align:center;">
+<h2 style="margin:0;">AKUDON<span>GOLD</span></h2>
+<button onclick="startSystem()" class="btn-action" style="margin-top:20px;">INITIALIZE TERMINAL</button>
 </div>
 </div>
 
 <header>
 <div class="logo">AKUDON<span>GOLD</span></div>
-<div style="text-align: right;">
-<div id="clock" style="font-family: 'JetBrains Mono'; font-weight: 600; color: var(--accent);">00:00:00</div>
-<div style="font-size: 10px; color: var(--text-dim);">LAGOS / ABIDJAN</div>
-</div>
+<div id="clock" style="font-family:'JetBrains Mono'; color:var(--accent);">00:00:00</div>
 </header>
 
 <div class="app-container">
-<main class="left-col">
+<main>
 <div id="signal-box" class="glass-card signal-box">
-<div class="signal-header">
+<div style="display:flex; justify-content:space-between;">
 <div>
-<label id="bot-status" style="color: var(--accent);">AI SCANNER ACTIVE</label>
-<div id="signal-text" class="signal-type">AWAITING SETUP</div>
+<div id="bot-status" style="font-size:10px; font-weight:bold; color:var(--text-dim);">AI SCANNING...</div>
+<div id="signal-text" style="font-size:26px; font-weight:800; margin:10px 0;">AWAITING SETUP</div>
+<div id="signal-timer" class="timer-badge" style="display:none;">⏱️ AGE: <span id="timer-clock">00:00</span></div>
 </div>
-<div id="signal-icon" style="font-size: 32px;">📡</div>
+<div style="font-size:30px;">📡</div>
 </div>
-<div class="checklist">
-<span id="c1" class="check-pill">NO HIGH NEWS</span>
-<span id="c2" class="check-pill">HTF TREND ALIGN</span>
-<span id="c3" class="check-pill">ZONE CONTACT</span>
+<div style="margin-top:15px;">
+<span id="c1" class="check-pill">NEWS OK</span><span id="c2" class="check-pill">HTF TREND</span><span id="c3" class="check-pill">BANK ZONE</span>
 </div>
 </div>
 
 <div class="glass-card">
-<div class="field-grid">
-<div class="input-wrap"><label>Balance</label><input type="number" id="bal" value="1000" oninput="calculate()"></div>
-<div class="input-wrap"><label>Risk %</label><input type="number" id="risk" value="1" oninput="calculate()"></div>
-<div class="input-wrap"><label>SL (Pips)</label><input type="number" id="sl_p" value="20" oninput="calculate()"></div>
-<div class="input-wrap"><label>Lot Size</label>
-<div style="background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); padding: 11px; border-radius: 10px; text-align: center; color: var(--accent); font-weight: 800;" id="lot_out">0.05</div>
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+<input type="number" id="bal" value="1000" oninput="calc()">
+<div style="background:rgba(56,189,248,0.1); border:1px solid var(--accent); padding:11px; border-radius:10px; text-align:center;">
+LOT: <strong id="lot_out" style="color:var(--accent);">0.05</strong>
 </div>
-</div>
-<div class="field-grid" style="grid-template-columns: 1fr 1fr;">
-<input type="text" id="pair" placeholder="Pair (EURUSD)">
+<input type="text" id="p" placeholder="Pair">
 <select id="dir"><option>BUY</option><option>SELL</option></select>
+<input type="number" id="ent" placeholder="Entry">
+<input type="number" id="sl" placeholder="SL">
 </div>
-<div class="field-grid">
-<input type="number" id="entry" placeholder="Entry Price" step="0.0001">
-<input type="number" id="sl" placeholder="Stop Loss" step="0.0001">
-<input type="number" id="tp" placeholder="Take Profit" step="0.0001">
 <button class="btn-action" onclick="logTrade()">EXECUTE & LOG</button>
 </div>
-</div>
 
-<div class="glass-card chart-frame">
-<div id="tv_chart" style="height: 100%;"></div>
-</div>
+<div class="glass-card" style="height:400px; padding:10px;"><div id="tv_chart" style="height:100%;"></div></div>
 </main>
 
-<aside class="right-col">
-<div class="glass-card" style="height: 350px; padding: 10px;">
-<div class="tradingview-widget-container" style="height: 100%;">
-<div class="tradingview-widget-container__widget"></div>
+<aside>
+<div class="glass-card" style="height:350px; padding:5px;">
+<div class="tradingview-widget-container" style="height:100%;">
 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
 { "colorTheme": "dark", "isTransparent": true, "width": "100%", "height": "100%", "locale": "en", "importanceFilter": "0,1" }
 </script>
 </div>
 </div>
-
 <div class="glass-card">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-<label>Recent Trades</label>
-<button onclick="downloadPDF()" style="background:none; border:1px solid var(--accent); color:var(--accent); font-size:10px; padding:4px 8px; border-radius:6px; cursor:pointer;">PDF REPORT</button>
+<div style="display:flex; justify-content:space-between; align-items:center;">
+<h4 style="margin:0;">JOURNAL</h4>
+<div>
+<button onclick="downloadPDF()" style="background:none; border:1px solid var(--accent); color:var(--accent); font-size:10px; padding:5px; border-radius:6px;">PDF</button>
+<button onclick="clearJournal()" style="background:none; border:1px solid var(--danger); color:var(--danger); font-size:10px; padding:5px; border-radius:6px;">RESET</button>
 </div>
-<div class="table-scroll">
-<table>
-<thead><tr><th>PAIR</th><th>TYPE</th><th>ENTRY</th></tr></thead>
-<tbody id="j_body"></tbody>
-</table>
 </div>
+<table style="width:100%; font-size:12px; margin-top:10px;"><tbody id="j_body"></tbody></table>
 </div>
 </aside>
 </div>
@@ -182,61 +103,40 @@ tr:not(:last-child) { border-bottom: 1px solid var(--border); }
 <script>
 const alarm = document.getElementById('bank-alert');
 let trades = JSON.parse(localStorage.getItem('akuTrades')) || [];
+let timerInt; let sec = 0;
 
 function startSystem() {
-alarm.play().then(() => {
-alarm.pause();
-document.getElementById('boot-overlay').style.display = 'none';
-new TradingView.widget({
-"autosize": true, "symbol": "FX:EURUSD", "interval": "60", "timezone": "Africa/Abidjan",
-"theme": "dark", "style": "1", "locale": "en", "container_id": "tv_chart", "hide_side_toolbar": false
-});
-renderJournal();
-});
+alarm.play().then(() => { alarm.pause(); document.getElementById('boot-overlay').style.display='none';
+new TradingView.widget({ "autosize": true, "symbol": "FX:EURUSD", "interval": "60", "timezone": "Africa/Abidjan", "theme": "dark", "container_id": "tv_chart" });
+renderJournal(); });
 }
 
-function calculate() {
-let lot = (document.getElementById('bal').value * (document.getElementById('risk').value/100)) / (document.getElementById('sl_p').value * 10);
-document.getElementById('lot_out').innerText = lot.toFixed(2);
-}
-
-function logTrade() {
-const t = {
-p: document.getElementById('pair').value, d: document.getElementById('dir').value,
-e: document.getElementById('entry').value, sl: document.getElementById('sl').value,
-tp: document.getElementById('tp').value, date: new Date().toLocaleDateString()
-};
-trades.unshift(t);
-localStorage.setItem('akuTrades', JSON.stringify(trades.slice(0, 50)));
-renderJournal();
-triggerVisualAlert(t.d);
-}
-
-function triggerVisualAlert(type) {
+function triggerSignal(type, pair, price) {
+clearInterval(timerInt); sec = 0; document.getElementById('signal-timer').style.display='inline-block';
+document.getElementById('signal-text').innerHTML = `<span style="color:${type==='BUY'?'var(--success)':'var(--danger)'}">${type} ${pair}</span> @ ${price}`;
+document.getElementById('signal-box').style.borderColor = type==='BUY'?'var(--success)':'var(--danger)';
+document.querySelectorAll('.check-pill').forEach(el => el.classList.add('active-pill'));
 alarm.play();
-const box = document.getElementById('signal-box');
-box.style.borderColor = type === 'BUY' ? 'var(--success)' : 'var(--danger)';
-setTimeout(() => box.style.borderColor = 'var(--border)', 3000);
+timerInt = setInterval(() => {
+sec++; let m = Math.floor(sec/60).toString().padStart(2,'0'); let s = (sec%60).toString().padStart(2,'0');
+document.getElementById('timer-clock').innerText = `${m}:${s}`;
+if(sec > 900) document.getElementById('timer-clock').style.color = 'var(--danger)';
+}, 1000);
 }
 
-function renderJournal() {
-document.getElementById('j_body').innerHTML = trades.slice(0, 10).map(t => `
-<tr>
-<td style="font-weight:700">${t.p}</td>
-<td style="color: ${t.d === 'BUY' ? 'var(--success)' : 'var(--danger)'}; font-weight:800">${t.d}</td>
-<td style="font-family:'JetBrains Mono'">${t.e}</td>
-</tr>`).join('');
+function calc() { document.getElementById('lot_out').innerText = (document.getElementById('bal').value * 0.01 / 200).toFixed(2); }
+function logTrade() {
+const t = { p: document.getElementById('p').value, d: document.getElementById('dir').value, e: document.getElementById('ent').value, date: new Date().toLocaleDateString() };
+trades.unshift(t); localStorage.setItem('akuTrades', JSON.stringify(trades.slice(0,20))); renderJournal();
 }
-
+function renderJournal() { document.getElementById('j_body').innerHTML = trades.slice(0,5).map(t => `<tr><td>${t.p}</td><td style="color:${t.d==='BUY'?'var(--success)':'var(--danger)'}">${t.d}</td><td>${t.e}</td></tr>`).join(''); }
+function clearJournal() { if(confirm("Clear Month?")) { localStorage.removeItem('akuTrades'); trades=[]; renderJournal(); } }
 function downloadPDF() {
-const { jsPDF } = window.jspdf;
-const doc = new jsPDF();
-doc.setFontSize(18); doc.text("AKUDON GOLD - WEEKEND REPORT", 14, 20);
-const rows = trades.map(t => [t.date, t.p, t.d, t.e, t.sl, t.tp]);
-doc.autoTable({ head: [['Date', 'Pair', 'Type', 'Entry', 'SL', 'TP']], body: rows, startY: 30 });
-doc.save(`AkuDon_Report.pdf`);
+const { jsPDF } = window.jspdf; const doc = new jsPDF();
+doc.text("AKUDON GOLD REPORT", 14, 20);
+doc.autoTable({ head: [['Date', 'Pair', 'Type', 'Entry']], body: trades.map(t=>[t.date,t.p,t.d,t.e]), startY: 30 });
+doc.save("AkuDon_Report.pdf");
 }
-
 setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB'); }, 1000);
 </script>
 </body>
