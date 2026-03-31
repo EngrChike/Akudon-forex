@@ -1,6 +1,6 @@
 import os
 import json
-import yfinance as yf # New Data Source
+import yfinance as yf
 import firebase_admin
 from firebase_admin import credentials, messaging
 
@@ -25,27 +25,34 @@ def send_akudon_push(signal, pair, price):
     print(f"Successfully sent {signal} signal for {pair}")
 
 def check_market():
-    # BTC-USD for testing. You can use 'EURUSD=X' or 'GC=F' for Gold.
-    symbol = 'BTC-USD' 
-    ticker = yf.Ticker(symbol)
-    df = ticker.history(period='1d', interval='5m')
-    
-    if len(df) < 10:
-        print("Waiting for more market data...")
-        return
+    # We are now scanning both Gold and EUR/USD
+    assets = {
+        'GC=F': 'GOLD',
+        'EURUSD=X': 'EUR/USD'
+    }
 
-    # Logic: If current price is lower than the previous low (Bank Zone)
-    current_price = round(df['Close'].iloc[-1], 2)
-    last_low = round(df['Low'].iloc[-2], 2)
+    for symbol, name in assets.items():
+        ticker = yf.Ticker(symbol)
+        # We use a 1-day period with 5-minute intervals
+        df = ticker.history(period='1d', interval='5m')
+        
+        if len(df) < 5:
+            print(f"Waiting for more data for {name}...")
+            continue
 
-    print(f"Scanning {symbol}... Price: {current_price} | Last Low: {last_low}")
+        current_price = round(df['Close'].iloc[-1], 4)
+        last_low = round(df['Low'].iloc[-2], 4)
+        last_high = round(df['High'].iloc[-2], 4)
 
-    if current_price < last_low:
-        send_akudon_push("BUY", symbol, current_price)
-    elif current_price > df['High'].iloc[-2]:
-        send_akudon_push("SELL", symbol, current_price)
-    else:
-        print("Market is quiet. No AkuDon signal yet.")
+        print(f"Scanning {name}... Price: {current_price}")
+
+        # Bank Buy Logic: Price dips below previous low
+        if current_price < last_low:
+            send_akudon_push("BUY", name, current_price)
+        
+        # Bank Sell Logic: Price breaks above previous high
+        elif current_price > last_high:
+            send_akudon_push("SELL", name, current_price)
 
 if __name__ == "__main__":
     check_market()
