@@ -22,35 +22,32 @@ def send_akudon_push(signal, pair, price):
         topic="all_users" 
     )
     messaging.send(message)
-    print(f"Successfully sent {signal} signal for {pair}")
+    print(f"SENT: {signal} on {pair}")
 
 def check_market():
-    # We are now scanning both Gold and EUR/USD
+    # THE BIG FOUR: Gold, EURUSD, and the Yen Pairs
     assets = {
         'GC=F': 'GOLD',
-        'EURUSD=X': 'EUR/USD'
+        'EURUSD=X': 'EUR/USD',
+        'GBPJPY=X': 'GBP/JPY',
+        'USDJPY=X': 'USD/JPY'
     }
 
     for symbol, name in assets.items():
         ticker = yf.Ticker(symbol)
-        # We use a 1-day period with 5-minute intervals
         df = ticker.history(period='1d', interval='5m')
         
-        if len(df) < 5:
-            print(f"Waiting for more data for {name}...")
-            continue
+        if len(df) < 5: continue
 
         current_price = round(df['Close'].iloc[-1], 4)
         last_low = round(df['Low'].iloc[-2], 4)
         last_high = round(df['High'].iloc[-2], 4)
 
-        print(f"Scanning {name}... Price: {current_price}")
+        print(f"Checking {name}: {current_price}")
 
-        # Bank Buy Logic: Price dips below previous low
-        if current_price > 0:
+        # 1% Risk Entry Logic
+        if current_price < last_low:
             send_akudon_push("BUY", name, current_price)
-        
-        # Bank Sell Logic: Price breaks above previous high
         elif current_price > last_high:
             send_akudon_push("SELL", name, current_price)
 
