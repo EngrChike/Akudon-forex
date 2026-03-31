@@ -3,41 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AkuDon Gold | Professional Terminal</title>
+    <title>AkuDon Gold | Pro Terminal</title>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
     <style>
         body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .header { color: #d4af37; font-size: 26px; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+        .header { color: #d4af37; font-size: 26px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
         
-        /* 1. Signal Intelligence Section */
-        .intel-container { display: flex; gap: 10px; margin: 20px 0; }
-        .pill { padding: 8px 15px; border-radius: 20px; border: 1px solid #333; font-size: 11px; background: #111; color: #555; font-weight: bold; }
-        .pill.active { background: #10b981; color: #fff; border-color: #059669; box-shadow: 0 0 10px #10b981; }
-        .pill.news-red { background: #ef4444; color: #fff; }
+        /* Signal Freshness Timer */
+        #timer-box { font-size: 14px; color: #888; margin-bottom: 15px; padding: 5px 15px; border-radius: 5px; background: #1a1a1a; }
+        .fresh { color: #10b981 !important; } /* Green for new */
+        .expired { color: #ef4444 !important; font-weight: bold; } /* Red for old */
 
-        /* 2. Main Signal Display */
+        .intel-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .pill { padding: 8px 15px; border-radius: 20px; border: 1px solid #333; font-size: 11px; background: #111; color: #555; }
+        .pill.active { background: #10b981; color: #fff; border-color: #059669; box-shadow: 0 0 10px #10b981; }
+
         .terminal-box { background: #161616; width: 100%; max-width: 450px; border-radius: 15px; border: 1px solid #333; padding: 25px; box-sizing: border-box; }
-        .signal-header { font-size: 22px; margin-bottom: 5px; color: #888; }
         .price-text { font-size: 32px; font-weight: bold; color: #d4af37; margin: 10px 0; }
 
-        /* 3. Risk Management Section */
         .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; text-align: left; }
         .risk-item { background: #222; padding: 15px; border-radius: 8px; }
-        .label { font-size: 10px; color: #888; text-transform: uppercase; margin-bottom: 5px; }
-        .val { font-size: 18px; font-weight: bold; color: #fff; }
+        .label { font-size: 10px; color: #888; text-transform: uppercase; }
+        .val { font-size: 18px; font-weight: bold; }
 
-        /* 4. Lot Size Calculator */
-        .calc-section { margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; }
-        input { background: #000; border: 1px solid #444; color: gold; padding: 10px; width: 80%; border-radius: 5px; text-align: center; font-size: 16px; }
-        
-        .btn-trade { background: #d4af37; color: #000; border: none; padding: 15px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 16px; }
+        input { background: #000; border: 1px solid #444; color: gold; padding: 10px; width: 90%; border-radius: 5px; text-align: center; margin-top: 10px; }
+        .btn-trade { background: #d4af37; color: #000; border: none; padding: 15px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
 
     <div class="header">AKUDON GOLD</div>
-    <div id="status" style="color: #666; font-size: 12px; margin-bottom: 20px;">SYSTEM ONLINE</div>
+    <div id="timer-box">Signal Age: <span id="signal-timer">00:00</span></div>
 
     <div class="intel-container">
         <div id="news-pill" class="pill">NEWS: OK</div>
@@ -46,92 +43,92 @@
     </div>
 
     <div class="terminal-box">
-        <div class="signal-header" id="signal-type">WAITING FOR MOVE...</div>
+        <div id="signal-type" style="font-size: 20px; color: #888;">WAITING...</div>
         <div class="price-text" id="entry-price">0.0000</div>
         
         <div class="risk-grid">
-            <div class="risk-item">
-                <div class="label">Stop Loss (SL)</div>
-                <div class="val" id="sl-val" style="color: #ef4444;">-</div>
-            </div>
-            <div class="risk-item">
-                <div class="label">Take Profit (TP)</div>
-                <div class="val" id="tp-val" style="color: #10b981;">-</div>
-            </div>
+            <div class="risk-item"><div class="label">Stop Loss</div><div class="val" id="sl-val" style="color:#ef4444;">-</div></div>
+            <div class="risk-item"><div class="label">Take Profit</div><div class="val" id="tp-val" style="color:#10b981;">-</div></div>
         </div>
 
-        <div class="calc-section">
-            <div class="label">Trading Account Balance ($)</div>
+        <div style="margin-top:20px; border-top:1px solid #333; padding-top:15px;">
+            <div class="label">Account Balance ($)</div>
             <input type="number" id="balance" value="1000" oninput="calculateLot()">
-            <div class="risk-grid" style="margin-top:10px;">
-                <div class="risk-item" style="background: #1a1a1a;">
-                    <div class="label">Recommended Lot Size</div>
-                    <div class="val" id="lot-size" style="color: gold;">0.00</div>
-                </div>
-                <div class="risk-item" style="background: #1a1a1a;">
-                    <div class="label">Risk Amount (1%)</div>
-                    <div id="risk-cash" class="val" style="color: #888;">$10.00</div>
-                </div>
+            <div class="risk-grid">
+                <div class="risk-item"><div class="label">Recommended Lot</div><div class="val" id="lot-size" style="color:gold;">0.00</div></div>
+                <div class="risk-item"><div class="label">Risk (1%)</div><div id="risk-cash" class="val" style="color:#888;">$10.00</div></div>
             </div>
         </div>
 
         <button class="btn-trade" onclick="window.open('https://www.metatrader5.com/')">EXECUTE ON MT5</button>
     </div>
 
-    <script>
-        // --- FIREBASE CONFIG (ADD YOURS HERE) ---
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            projectId: "akudon-gold",
-            messagingSenderId: "YOUR_ID",
-            appId: "YOUR_APP_ID"
-        };
+    <audio id="cashSound" src="https://www.soundjay.com/misc/sounds/cash-register-05.mp3"></audio>
 
+    <script>
+        const firebaseConfig = { /* PASTE YOUR CONFIG HERE */ };
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
-        // --- CORE CALCULATIONS ---
+        let signalStartTime = null;
+
         messaging.onMessage((payload) => {
             const type = payload.notification.title.includes("BUY") ? "BUY" : "SELL";
             const price = parseFloat(payload.notification.body.split("at ")[1]);
             const pair = payload.notification.body.split("on ")[1].split(" at")[0];
 
+            // Play Success Sound
+            document.getElementById('cashSound').play();
+            
+            // Start Timer
+            signalStartTime = new Date();
+            startTimer();
+
             updateUI(type, price, pair);
         });
 
+        function startTimer() {
+            setInterval(() => {
+                if (!signalStartTime) return;
+                const now = new Date();
+                const diff = Math.floor((now - signalStartTime) / 1000);
+                const mins = Math.floor(diff / 60).toString().padStart(2, '0');
+                const secs = (diff % 60).toString().padStart(2, '0');
+                
+                const timerDisplay = document.getElementById('signal-timer');
+                timerDisplay.innerText = `${mins}:${secs}`;
+
+                // FRESHNESS LOGIC
+                if (diff < 300) { // Under 5 mins
+                    timerDisplay.className = "fresh";
+                    document.getElementById('status').innerText = "FRESH SIGNAL: ENTER NOW";
+                } else if (diff >= 900) { // Over 15 mins
+                    timerDisplay.className = "expired";
+                    document.getElementById('status').innerText = "SIGNAL EXPIRED: DO NOT ENTER";
+                }
+            }, 1000);
+        }
+
         function updateUI(type, price, pair) {
-            document.getElementById('signal-type').innerText = type + " ORDER: " + pair;
+            document.getElementById('signal-type').innerText = type + " " + pair;
             document.getElementById('signal-type').style.color = type === "BUY" ? "#10b981" : "#ef4444";
             document.getElementById('entry-price').innerText = price.toFixed(2);
 
-            // STOP LOSS & TAKE PROFIT LOGIC (SMC Style)
-            let sl, tp;
-            if (type === "BUY") {
-                sl = price - 30; // 30 Pip SL for Gold
-                tp = price + 90; // 1:3 Risk Reward
-            } else {
-                sl = price + 30;
-                tp = price - 90;
-            }
+            let sl = type === "BUY" ? price - 3.0 : price + 3.0; // 30 Pips for Gold
+            let tp = type === "BUY" ? price + 9.0 : price - 9.0; // 1:3 RR
 
             document.getElementById('sl-val').innerText = sl.toFixed(2);
             document.getElementById('tp-val').innerText = tp.toFixed(2);
-
-            // Activate Intelligence Pills
+            
             document.getElementById('trend-pill').classList.add('active');
             document.getElementById('zone-pill').classList.add('active');
-            
             calculateLot();
         }
 
         function calculateLot() {
             const balance = document.getElementById('balance').value;
-            const risk = balance * 0.01; // 1% Risk Rule
-            
-            // Formula: (Risk Amount) / (Stop Loss Pips * 10)
-            // For Gold, 30 pips is roughly 3.00 points
-            const lot = (risk / (30 * 10)).toFixed(2); 
-
+            const risk = balance * 0.01;
+            const lot = (risk / 300).toFixed(2); // 30 pip SL math
             document.getElementById('lot-size').innerText = lot;
             document.getElementById('risk-cash').innerText = "$" + risk.toFixed(2);
         }
