@@ -47,7 +47,7 @@ def check_market():
         print(f"Scanning {name}... Price: {current_price}")
 
         # Bank Buy Logic: Price dips below previous low
-        if current_price < last_low:
+        if current_price > 0:
             send_akudon_push("BUY", name, current_price)
         
         # Bank Sell Logic: Price breaks above previous high
